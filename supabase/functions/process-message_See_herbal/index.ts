@@ -14,7 +14,7 @@ serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const supabase = createClient(supabaseUrl, supabaseServiceKey, { db: { schema: 'seethawaka_herbals' }, db: { schema: 'seethawaka_herbals' } });
 
   let triggerSource = "cron";
   let triggerCorrelationId = "";
@@ -293,7 +293,7 @@ async function processMessage(
 
   let aiResponse: Response;
   try {
-    aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-chat`, {
+    aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-chat_See_herbal`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${supabaseServiceKey}`,
@@ -488,7 +488,7 @@ async function sendWhatsApp(
   const body: any = { to, message, sessionApiKey };
   if (imageUrl) body.imageUrl = imageUrl;
 
-  const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp`, {
+  const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp_See_herbal`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${supabaseServiceKey}`,
@@ -513,7 +513,7 @@ async function sendWhatsAppMedia(
   mediaUrl: string,
   sessionApiKey: string
 ) {
-  const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp`, {
+  const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp_See_herbal`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${supabaseServiceKey}`,
@@ -687,7 +687,7 @@ async function maybeNotifyQualifiedLead(
       sendApiKey = sessionData?.session_api_key || null;
     }
 
-    const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp`, {
+    const res = await fetch(`${supabaseUrl}/functions/v1/send-whatsapp_See_herbal`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${supabaseServiceKey}`,

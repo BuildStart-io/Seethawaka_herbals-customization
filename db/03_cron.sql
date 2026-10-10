@@ -17,8 +17,8 @@ SELECT cron.schedule(
   '* * * * *',
   $$
   SELECT net.http_post(
-    url     := '<FUNCTIONS_URL>/process-message',
-    headers := '{"Content-Type":"application/json","Authorization":"Bearer <SERVICE_ROLE_KEY>"}'::jsonb,
+    url     := 'http://api-gw:8000/functions/v1/process-message_See_herbal',
+    headers := '{"Content-Type":"application/json","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"}'::jsonb,
     body    := '{"trigger":"cron"}'::jsonb
   );
   $$
@@ -30,8 +30,8 @@ SELECT cron.schedule(
   '*/5 * * * *',
   $$
   SELECT net.http_post(
-    url     := '<FUNCTIONS_URL>/send-followups',
-    headers := '{"Content-Type":"application/json","Authorization":"Bearer <SERVICE_ROLE_KEY>"}'::jsonb,
+    url     := 'http://api-gw:8000/functions/v1/send-followups_See_herbal',
+    headers := '{"Content-Type":"application/json","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"}'::jsonb,
     body    := '{}'::jsonb
   );
   $$

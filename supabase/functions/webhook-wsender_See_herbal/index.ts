@@ -27,7 +27,7 @@ serve(async (req) => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const supabase = createClient(supabaseUrl, supabaseServiceKey, { db: { schema: 'seethawaka_herbals' }, db: { schema: 'seethawaka_herbals' } });
 
   const correlationId = crypto.randomUUID();
 
@@ -172,7 +172,7 @@ serve(async (req) => {
     }
 
     // Fire-and-forget trigger process-message (cron is the safety net)
-    fetch(`${supabaseUrl}/functions/v1/process-message`, {
+    fetch(`${supabaseUrl}/functions/v1/process-message_See_herbal`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

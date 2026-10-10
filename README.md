@@ -54,7 +54,7 @@ frontend/               the full dashboard, including super-admin and billing pa
    code, so run the runtime with `--no-verify-jwt`.
 5. **Cron**: fill in the placeholders in `db/03_cron.sql` and run it.
 6. **WAHA**: point its webhook at
-   `http://<your-host>:8000/functions/v1/webhook-wsender`.
+   `http://<your-host>:8000/functions/v1/webhook-wsender_See_herbal`.
 7. **MinIO**: one public bucket per business, named `biz-<user_id>`; `media-storage`
    creates them on demand.
 8. **Frontend**

@@ -10,13 +10,39 @@ services:
   functions:
     environment:
       # ── BuildStart.io edge function secrets ──────────────────────────────────
-      AI_GENERATE_URL: ${AI_GENERATE_URL}
-      BOT_API_KEY: ${BOT_API_KEY}
-      WAHA_BASE_URL: ${WAHA_BASE_URL}
-      WAHA_API_KEY: ${WAHA_API_KEY}
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
-      MINIO_REGION: ${MINIO_REGION}
+      AI_GENERATE_URL: "https://ykzefldgpynswokdijur.supabase.co/functions/v1/ai-generate"
+      BOT_API_KEY: "7b02ee4ab25ba1529bd11aef41484a5145c261fde14273e5050c2efe8003c965"
+      WAHA_BASE_URL: "http://waha:3000"
+      WAHA_API_KEY: "buildstart_waha_api_secr3t_123"
+      MINIO_ENDPOINT: "http://supabase-minio:9000"
+      MINIO_ACCESS_KEY: "supa-storage"
+      MINIO_SECRET_KEY: "secret1234"
+      MINIO_REGION: "us-east-1"
       FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON:-}
-      WEBHOOK_URL_OVERRIDE: "https://regards-translate-adventures-pine.trycloudflare.com/functions/v1/webhook-wsender"
+      WEBHOOK_URL_OVERRIDE: "https://approaches-volume-entertainment-get.trycloudflare.com/functions/v1/webhook-wsender_See_herbal"
+
+  waha:
+    container_name: waha
+    image: devlikeapro/waha
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      WHATSAPP_API_KEY: "buildstart_waha_api_secr3t_123"
+
+  minio:
+    container_name: supabase-minio
+    image: elestio/minio:latest
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: supa-storage
+      MINIO_ROOT_PASSWORD: secret1234
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data:z
+
+volumes:
+  minio-data:

@@ -12,7 +12,7 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.15"
   }
-  public: {
+  seethawaka_herbals: {
     Tables: {
       ai_usage_logs: {
         Row: {
@@ -463,7 +463,7 @@ export type Database = {
           is_paused: boolean
           max_faqs: number | null
           max_products: number | null
-          plan_tier: Database["public"]["Enums"]["plan_tier"]
+          plan_tier: Database["seethawaka_herbals"]["Enums"]["plan_tier"]
           updated_at: string
           user_id: string
         }
@@ -485,7 +485,7 @@ export type Database = {
           is_paused?: boolean
           max_faqs?: number | null
           max_products?: number | null
-          plan_tier?: Database["public"]["Enums"]["plan_tier"]
+          plan_tier?: Database["seethawaka_herbals"]["Enums"]["plan_tier"]
           updated_at?: string
           user_id: string
         }
@@ -507,7 +507,7 @@ export type Database = {
           is_paused?: boolean
           max_faqs?: number | null
           max_products?: number | null
-          plan_tier?: Database["public"]["Enums"]["plan_tier"]
+          plan_tier?: Database["seethawaka_herbals"]["Enums"]["plan_tier"]
           updated_at?: string
           user_id?: string
         }
@@ -583,19 +583,19 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          role: Database["public"]["Enums"]["app_role"]
+          role: Database["seethawaka_herbals"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          role?: Database["seethawaka_herbals"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          role?: Database["seethawaka_herbals"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
@@ -644,7 +644,7 @@ export type Database = {
       get_staff_owner_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
+          _role: Database["seethawaka_herbals"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
@@ -667,7 +667,7 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "seethawaka_herbals">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -783,7 +783,7 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  public: {
+  seethawaka_herbals: {
     Enums: {
       app_role: ["super_admin", "business_user"],
       plan_tier: ["free", "pro", "enterprise"],
