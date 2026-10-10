@@ -90,6 +90,10 @@ export default function Settings() {
   const [inactivityFollowupMessage, setInactivityFollowupMessage] = useState("");
   const [inactivityFollowupHours, setInactivityFollowupHours] = useState<string>("24");
 
+  // Contact Numbers
+  const [staffContact, setStaffContact] = useState("");
+  const [doctorContact, setDoctorContact] = useState("");
+
   // WhatsApp Connection
   const [sessions, setSessions] = useState<WsenderSession[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(false);
@@ -185,6 +189,12 @@ export default function Settings() {
             setInactivityFollowupMessage(iVal?.text || "");
             setInactivityFollowupEnabled(iVal?.enabled ?? false);
             setInactivityFollowupHours(String(iVal?.hours ?? 24));
+            break;
+          }
+          case "contact_numbers": {
+            const val = setting.value as any;
+            setStaffContact(val?.staff || "");
+            setDoctorContact(val?.doctor || "");
             break;
           }
         }
@@ -575,6 +585,10 @@ export default function Settings() {
       enabled: inactivityFollowupEnabled,
       hours,
     });
+  };
+
+  const handleSaveContactNumbers = () => {
+    saveSettings("contact_numbers", { staff: staffContact, doctor: doctorContact });
   };
 
   const copyWebhookUrl = async () => {
@@ -981,6 +995,49 @@ export default function Settings() {
                     <Save className="mr-2 h-4 w-4" />
                   )}
                   Save Message
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Contact Numbers */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Smartphone className="h-5 w-5" />
+                  Contact Numbers
+                </CardTitle>
+                <CardDescription>
+                  These numbers are provided by the AI when a customer asks for staff or a doctor
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="staff-contact">Staff Contact Number</Label>
+                    <Input
+                      id="staff-contact"
+                      value={staffContact}
+                      onChange={(e) => setStaffContact(e.target.value)}
+                      placeholder="+94 77 123 4567"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="doctor-contact">Doctor Contact Number</Label>
+                    <Input
+                      id="doctor-contact"
+                      value={doctorContact}
+                      onChange={(e) => setDoctorContact(e.target.value)}
+                      placeholder="+94 77 987 6543"
+                    />
+                  </div>
+                </div>
+                <Button onClick={handleSaveContactNumbers} disabled={saving}>
+                  {saving ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Save Contacts
                 </Button>
               </CardContent>
             </Card>

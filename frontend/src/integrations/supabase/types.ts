@@ -230,34 +230,73 @@ export type Database = {
       }
       leads: {
         Row: {
+          advertisement_product: string | null
           assigned_to: string | null
           created_at: string
+          customer_interest: string | null
           customer_name: string | null
+          doctor_handoff_status: string | null
+          follow_up_date: string | null
+          follow_up_status: string | null
+          follow_up_time: string | null
+          health_condition: string | null
           id: string
+          images_sent: string | null
+          lead_source: string | null
           phone_number: string
+          product_information_sent: string | null
+          recommended_product: string | null
+          staff_handoff_status: string | null
           status: string
           updated_at: string
           user_id: string
+          videos_sent: string | null
         }
         Insert: {
+          advertisement_product?: string | null
           assigned_to?: string | null
           created_at?: string
+          customer_interest?: string | null
           customer_name?: string | null
+          doctor_handoff_status?: string | null
+          follow_up_date?: string | null
+          follow_up_status?: string | null
+          follow_up_time?: string | null
+          health_condition?: string | null
           id?: string
+          images_sent?: string | null
+          lead_source?: string | null
           phone_number: string
+          product_information_sent?: string | null
+          recommended_product?: string | null
+          staff_handoff_status?: string | null
           status?: string
           updated_at?: string
           user_id: string
+          videos_sent?: string | null
         }
         Update: {
+          advertisement_product?: string | null
           assigned_to?: string | null
           created_at?: string
+          customer_interest?: string | null
           customer_name?: string | null
+          doctor_handoff_status?: string | null
+          follow_up_date?: string | null
+          follow_up_status?: string | null
+          follow_up_time?: string | null
+          health_condition?: string | null
           id?: string
+          images_sent?: string | null
+          lead_source?: string | null
           phone_number?: string
+          product_information_sent?: string | null
+          recommended_product?: string | null
+          staff_handoff_status?: string | null
           status?: string
           updated_at?: string
           user_id?: string
+          videos_sent?: string | null
         }
         Relationships: []
       }

@@ -20,6 +20,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, Sparkles, Lock, Users, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const LEAD_STATUSES = [
   { value: "new", label: "New" },
@@ -48,6 +49,19 @@ interface LeadRow {
   inbound_count: number;
   has_order: boolean;
   last_time: string | null;
+  health_condition: string | null;
+  lead_source: string | null;
+  advertisement_product: string | null;
+  recommended_product: string | null;
+  product_information_sent: string | null;
+  images_sent: string | null;
+  videos_sent: string | null;
+  customer_interest: string | null;
+  follow_up_date: string | null;
+  follow_up_time: string | null;
+  follow_up_status: string | null;
+  doctor_handoff_status: string | null;
+  staff_handoff_status: string | null;
 }
 
 export default function Leads() {
@@ -86,7 +100,7 @@ export default function Leads() {
           .eq("user_id", effectiveUserId),
         supabase
           .from("leads" as any)
-          .select("id, phone_number, customer_name, assigned_to, status")
+          .select("id, phone_number, customer_name, assigned_to, status, health_condition, lead_source, advertisement_product, recommended_product, product_information_sent, images_sent, videos_sent, customer_interest, follow_up_date, follow_up_time, follow_up_status, doctor_handoff_status, staff_handoff_status")
           .eq("user_id", effectiveUserId),
         supabase
           .from("staff_accounts")
@@ -144,7 +158,7 @@ export default function Leads() {
         if (missing.length > 0) {
           const { data: inserted } = await (supabase.from("leads" as any) as any)
             .upsert(missing, { onConflict: "user_id,phone_number" })
-            .select("id, phone_number, customer_name, assigned_to, status");
+            .select("id, phone_number, customer_name, assigned_to, status, health_condition, lead_source, advertisement_product, recommended_product, product_information_sent, images_sent, videos_sent, customer_interest, follow_up_date, follow_up_time, follow_up_status, doctor_handoff_status, staff_handoff_status");
           ((inserted as any[]) || []).forEach((l) => leadMap.set(l.phone_number, l));
         }
       }
@@ -165,6 +179,19 @@ export default function Leads() {
           inbound_count: s?.inbound || 0,
           has_order: orderPhones.has(phone),
           last_time: s?.last || null,
+          health_condition: l?.health_condition || null,
+          lead_source: l?.lead_source || null,
+          advertisement_product: l?.advertisement_product || null,
+          recommended_product: l?.recommended_product || null,
+          product_information_sent: l?.product_information_sent || null,
+          images_sent: l?.images_sent || null,
+          videos_sent: l?.videos_sent || null,
+          customer_interest: l?.customer_interest || null,
+          follow_up_date: l?.follow_up_date || null,
+          follow_up_time: l?.follow_up_time || null,
+          follow_up_status: l?.follow_up_status || null,
+          doctor_handoff_status: l?.doctor_handoff_status || null,
+          staff_handoff_status: l?.staff_handoff_status || null,
         };
       });
 
@@ -455,96 +482,208 @@ export default function Leads() {
             ) : visibleRows.length === 0 ? (
               <p className="text-muted-foreground">No leads to show yet.</p>
             ) : (
-              <div className="space-y-3">
-                {visibleRows.map((row) => {
-                  const qualified = isQualified(row);
-                  return (
-                    <div
-                      key={row.phone_number}
-                      className={cn(
-                        "flex flex-col lg:flex-row lg:items-center gap-3 p-3 rounded-lg border",
-                        qualified && "border-primary/50 bg-primary/5"
-                      )}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-medium truncate">{row.customer_name}</p>
-                          {qualified && (
-                            <Badge className="text-[10px]">
-                              <Sparkles className="h-3 w-3 mr-1" />
-                              Qualified
+              <div className="rounded-md border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Customer Name</TableHead>
+                      <TableHead>WhatsApp Number</TableHead>
+                      <TableHead>Health Condition</TableHead>
+                      <TableHead>Lead Source</TableHead>
+                      <TableHead>Advertisement Product</TableHead>
+                      <TableHead>Recommended Product</TableHead>
+                      <TableHead>Product Info Sent</TableHead>
+                      <TableHead>Images Sent</TableHead>
+                      <TableHead>Videos Sent</TableHead>
+                      <TableHead>Customer Interest</TableHead>
+                      <TableHead>Follow-Up Date</TableHead>
+                      <TableHead>Follow-Up Time</TableHead>
+                      <TableHead>Follow-Up Status</TableHead>
+                      <TableHead>Doctor Handoff</TableHead>
+                      <TableHead>Staff Handoff</TableHead>
+                      <TableHead>Assignee</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {visibleRows.map((row) => (
+                      <TableRow key={row.phone_number}>
+                        <TableCell className="font-medium whitespace-nowrap">
+                          {row.customer_name}
+                          {isQualified(row) && (
+                            <Badge className="ml-2 text-[10px]">
+                              <Sparkles className="h-3 w-3 mr-1" /> Qualified
                             </Badge>
                           )}
-                          {row.has_order && (
-                            <Badge variant="secondary" className="text-[10px]">
-                              Ordered
-                            </Badge>
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">{row.phone_number}</TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-32 h-8 text-xs"
+                            value={row.health_condition || ""}
+                            placeholder="Condition"
+                            onChange={(e) => updateLead(row, { health_condition: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-24 h-8 text-xs"
+                            value={row.lead_source || ""}
+                            placeholder="Source"
+                            onChange={(e) => updateLead(row, { lead_source: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-32 h-8 text-xs"
+                            value={row.advertisement_product || ""}
+                            placeholder="Ad Product"
+                            onChange={(e) => updateLead(row, { advertisement_product: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-32 h-8 text-xs"
+                            value={row.recommended_product || ""}
+                            placeholder="Rec Product"
+                            onChange={(e) => updateLead(row, { recommended_product: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-24 h-8 text-xs"
+                            value={row.product_information_sent || ""}
+                            placeholder="Info Sent"
+                            onChange={(e) => updateLead(row, { product_information_sent: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-20 h-8 text-xs"
+                            value={row.images_sent || ""}
+                            placeholder="Images"
+                            onChange={(e) => updateLead(row, { images_sent: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-20 h-8 text-xs"
+                            value={row.videos_sent || ""}
+                            placeholder="Videos"
+                            onChange={(e) => updateLead(row, { videos_sent: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-32 h-8 text-xs"
+                            value={row.customer_interest || ""}
+                            placeholder="Interest"
+                            onChange={(e) => updateLead(row, { customer_interest: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-32 h-8 text-xs"
+                            type="date"
+                            value={row.follow_up_date || ""}
+                            onChange={(e) => updateLead(row, { follow_up_date: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-28 h-8 text-xs"
+                            type="time"
+                            value={row.follow_up_time || ""}
+                            onChange={(e) => updateLead(row, { follow_up_time: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-32 h-8 text-xs"
+                            value={row.follow_up_status || ""}
+                            placeholder="Status"
+                            onChange={(e) => updateLead(row, { follow_up_status: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-28 h-8 text-xs"
+                            value={row.doctor_handoff_status || ""}
+                            placeholder="Doctor"
+                            onChange={(e) => updateLead(row, { doctor_handoff_status: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Input
+                            className="w-28 h-8 text-xs"
+                            value={row.staff_handoff_status || ""}
+                            placeholder="Staff"
+                            onChange={(e) => updateLead(row, { staff_handoff_status: e.target.value })}
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          {isOwner ? (
+                            <Select
+                              value={row.assigned_to || UNASSIGNED}
+                              onValueChange={(v) =>
+                                updateLead(row, { assigned_to: v === UNASSIGNED ? null : v })
+                              }
+                            >
+                              <SelectTrigger className="w-[140px] h-8 text-xs">
+                                <SelectValue placeholder="Assign to" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value={UNASSIGNED}>Unassigned</SelectItem>
+                                {staff.map((s) => (
+                                  <SelectItem key={s.staff_user_id} value={s.staff_user_id}>
+                                    {s.staff_name || s.staff_email}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Badge variant="outline">{staffName(row.assigned_to)}</Badge>
                           )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {row.phone_number} · {row.inbound_count} message
-                          {row.inbound_count === 1 ? "" : "s"}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2">
-                        {isOwner ? (
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
                           <Select
-                            value={row.assigned_to || UNASSIGNED}
-                            onValueChange={(v) =>
-                              updateLead(row, { assigned_to: v === UNASSIGNED ? null : v })
-                            }
+                            value={row.status}
+                            onValueChange={(v) => updateLead(row, { status: v })}
                           >
-                            <SelectTrigger className="w-[170px]">
-                              <SelectValue placeholder="Assign to" />
+                            <SelectTrigger className="w-[120px] h-8 text-xs">
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value={UNASSIGNED}>Unassigned</SelectItem>
-                              {staff.map((s) => (
-                                <SelectItem key={s.staff_user_id} value={s.staff_user_id}>
-                                  {s.staff_name || s.staff_email}
+                              {LEAD_STATUSES.map((s) => (
+                                <SelectItem key={s.value} value={s.value}>
+                                  {s.label}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                        ) : (
-                          <Badge variant="outline">{staffName(row.assigned_to)}</Badge>
-                        )}
-
-                        <Select
-                          value={row.status}
-                          onValueChange={(v) => updateLead(row, { status: v })}
-                        >
-                          <SelectTrigger className="w-[140px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {LEAD_STATUSES.map((s) => (
-                              <SelectItem key={s.value} value={s.value}>
-                                {s.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            navigate(
-                              `/dashboard/conversations?phone=${encodeURIComponent(
-                                row.phone_number
-                              )}`
-                            )
-                          }
-                        >
-                          <MessageSquare className="h-4 w-4 mr-2" />
-                          Chat
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })}
+                        </TableCell>
+                        <TableCell className="text-right whitespace-nowrap">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8"
+                            onClick={() =>
+                              navigate(
+                                `/dashboard/conversations?phone=${encodeURIComponent(
+                                  row.phone_number
+                                )}`
+                              )
+                            }
+                          >
+                            <MessageSquare className="h-4 w-4 mr-2" />
+                            Chat
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             )}
           </CardContent>

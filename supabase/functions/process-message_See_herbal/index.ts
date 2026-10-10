@@ -162,6 +162,14 @@ async function processMessage(
     (!messageText && messageType !== "text" && !isVoice) ||
     (body?.data?.messages?.messageBody === undefined && body?.data?.messages?.message?.conversation === undefined && !isVoice && !messageText);
 
+  // Check if message is from an ad (WhatsApp referral or ad context)
+  const isFromAd = !!(
+    body?.payload?.referral ||
+    body?.payload?.context?.ad ||
+    body?.data?.messages?.[0]?.referral ||
+    body?.data?.messages?.[0]?.context?.ad
+  );
+
   // 1. Store the incoming message in conversations
   mark("store_inbound_start");
   const { data: inboundMsg, error: insertError } = await supabase.from("conversations").insert({
@@ -306,6 +314,7 @@ async function processMessage(
         conversationHistory: conversationHistory?.reverse() || [],
         userId,
         sessionApiKey,
+        isFromAd,
       }),
       signal: controller.signal,
     });
@@ -345,7 +354,7 @@ async function processMessage(
   }
 
   const replyMessage = aiData.response;
-  const replyImageUrls: string[] = Array.isArray(aiData.imageUrls) ? aiData.imageUrls : (aiData.imageUrl ? [aiData.imageUrl] : []);
+  const replyImageUrls: string[] = Array.isArray(aiData.imageUrls) ? aiData.imageUrls.slice(0, 1) : (aiData.imageUrl ? [aiData.imageUrl] : []);
   const replyVideoUrl = aiData.videoUrl || null;
   const followupMessage = aiData.followupMessage || null;
   const faqMedia: string[] = Array.isArray(aiData.faqMedia) ? aiData.faqMedia : [];
@@ -355,7 +364,7 @@ async function processMessage(
   mark("store_outbound_start");
   await supabase.from("conversations").insert({
     phone_number: phoneNumber,
-    message: replyMessage,
+    message: (replyMessage || "").replace(/---SPLIT---/g, '\n\n'),
     direction: "outbound",
     message_type: replyImageUrls.length > 0 ? "image" : "text",
     metadata: { correlationId: corrId, ...(faqMedia.length > 0 ? { faqMedia } : {}) },
@@ -381,8 +390,13 @@ async function processMessage(
     await sendWhatsAppMedia(supabaseUrl, supabaseServiceKey, phoneNumber, url, sessionApiKey);
   }
 
-  // Send text message last
-  await sendWhatsApp(supabaseUrl, supabaseServiceKey, phoneNumber, replyMessage, null, sessionApiKey);
+  // Send text message last (split if needed)
+  const messageParts = (replyMessage || "").split("---SPLIT---");
+  for (const part of messageParts) {
+    if (part.trim()) {
+      await sendWhatsApp(supabaseUrl, supabaseServiceKey, phoneNumber, part.trim(), null, sessionApiKey);
+    }
+  }
 
   // Send order follow-up message if present
   if (followupMessage) {
