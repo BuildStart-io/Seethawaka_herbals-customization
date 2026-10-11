@@ -19,7 +19,7 @@ services:
       MINIO_SECRET_KEY: "secret1234"
       MINIO_REGION: "us-east-1"
       FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON:-}
-      WEBHOOK_URL_OVERRIDE: "https://approaches-volume-entertainment-get.trycloudflare.com/functions/v1/webhook-wsender_See_herbal"
+      WEBHOOK_URL_OVERRIDE: "https://facilities-heights-pocket-formatting.trycloudflare.com/functions/v1/webhook-wsender_See_herbal"
 
   waha:
     container_name: waha

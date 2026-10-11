@@ -122,7 +122,7 @@ serve(async (req) => {
     const freeDeliveryThreshold = deliverySettings.free_delivery_threshold || 0;
 
     const productCatalog = products.map(p => {
-      let line = `- ${p.name}: Base price LKR ${p.price} (${p.product_type})`;
+      let line = `- ${p.name}: Price LKR ${p.price}`;
       if (p.product_type === "physical" && p.delivery_price && p.delivery_price > 0) {
         line += ` | Delivery fee: LKR ${p.delivery_price}`;
       }
